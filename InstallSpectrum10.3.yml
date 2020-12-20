@@ -1,0 +1,51 @@
+---
+  ## Instalación de Spectrum 10.3 en Linux Red Hat 8/CentOS 8
+  ## Autor: Jorge Zavala Navarr
+
+- name: INSTALAR SPECTRUM 10.3 EN LINUX RED HAT 8.0/CENTOS 8.0
+  hosts: all
+
+  vars:
+          repo_tag: spestrum_10_3
+          vars:
+          path_media_install_src: /root/Spectrum/Install_Spectrum_10_3_linux
+          path_media_install_dest: /home/Spectrum/Install_Spectrum_10_3_linux
+          path_media_install_dir: /home/Spectrum
+
+  tasks:
+          name: Validar si existe la carpeta con la media de instalación para spectrum
+          stat:
+                  path: '{{ path_media_install_dest }}'
+          register: existe_path_media_install_dest
+
+          name: Borrar la actual carpeta de la media de instalación en caso de existir
+          file:
+                  path: '{{ path_media_install_dest }}'
+                  state: absent
+          when: existe_path_media_install_dest.stat.exists
+
+          name: Validar si existe la carpeta '{{ path_media_install_dir }}' donde se va a colocar la carpeta del instalador
+          stat:
+                  path: '{{ path_media_install_dir }}'
+          register: existe_path_media_install_dir
+
+
+          name: Crear carpeta '{{ path_media_install_dir }}' para depositar la carpeta del instalable
+          file:
+                  path: '{{ path_media_install_dir }}'
+                  state: directory
+                  mode: '0755'
+          when: not existe_path_media_install_dir.stat.exists 
+
+          name: Copiar la media de instalación
+          copy:
+                  src: '{{ path_media_install_src }}'
+                  dest: '{{ path_media_install_dest }}'
+                  remote_src: no
+                  owner: root
+                  backup: no
+
+          
+
+
+
